@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: sans-serif;
+            width: 260px;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Create Reminder</h3>
+
+    <input id="title" placeholder="Task title" />
+
+    <select id="type">
+        <option value="ONE_TIME">One Time</option>
+        <option value="DAILY">Daily</option>
+    </select>
+
+    <input id="date" type="date" />
+    <input id="time" type="time" />
+
+    <div id="days">
+        <label><input type="checkbox" value="0" checked>Sun</label>
+        <label><input type="checkbox" value="1" checked>Mon</label>
+        <label><input type="checkbox" value="2" checked>Tue</label>
+        <label><input type="checkbox" value="3" checked>Wed</label>
+        <label><input type="checkbox" value="4" checked>Thu</label>
+        <label><input type="checkbox" value="5" checked>Fri</label>
+        <label><input type="checkbox" value="6" checked>Sat</label>
+    </div>
+
+    <button id="task-create">Create</button>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

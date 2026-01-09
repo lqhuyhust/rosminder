@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "Rosminder",
+    "version": "0.1",
+    "description": "Simple one-time & daily reminder",
+    "permissions": ["storage", "notifications", "alarms"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "128": "icon.png"
+    }
+}
