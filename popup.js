@@ -21,14 +21,22 @@ document.getElementById("task-create").onclick = async () => {
         daysOfWeek,
         active: true
     };
+    console.log("Creating task", task);
 
     const { tasks = [] } = await chrome.storage.local.get("tasks");
     tasks.push(task);
     await chrome.storage.local.set({ tasks });
+    console.log("Task saved");
     
     if (type === "ONE_TIME") {
         const when = new Date(`${date}T${time}`).getTime();
-        chrome.alarms.create(task.id, { when });
+        console.log("Creating ONE_TIME alarm at:", new Date(when));
+
+        if (when > Date.now()) {
+            chrome.alarms.create(task.id, { when });
+        } else {
+            alert("Time must be in the future");
+        }
     }
 
     window.close();
