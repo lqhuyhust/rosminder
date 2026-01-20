@@ -1,48 +1,47 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+    </head>
 
-<head>
-    <style>
-        body {
-            font-family: sans-serif;
-            width: 260px;
-        }
+    <body>
+        <!-- List View -->
+        <div id="list-view">
+            <h3>Rosminder List</h3>
+            <ul id="task-list"></ul>
+            <button id="open-create">Create Reminder</button>
+        </div>
 
-        input,
-        select,
-        button {
-            width: 100%;
-            margin: 4px 0;
-        }
-    </style>
-</head>
+        <!-- Form View -->
+        <div id="form-view" style="display: none;">
+            <button id="back-btn">Back</button>
+            <h3 id="form-title">Create Reminder</h3>
 
-<body>
-    <h3>Create Reminder</h3>
+            <input id="title" placeholder="Task title" />
 
-    <input id="title" placeholder="Task title" />
+            <select id="type">
+                <option value="ONE_TIME">One Time</option>
+                <option value="DAILY">Daily</option>
+            </select>
 
-    <select id="type">
-        <option value="ONE_TIME">One Time</option>
-        <option value="DAILY">Daily</option>
-    </select>
+            <input id="time" type="time" />
 
-    <input id="date" type="date" />
-    <input id="time" type="time" />
+            <div id="days">
+                <label><input type="checkbox" value="0" checked>Sun</label>
+                <label><input type="checkbox" value="1" checked>Mon</label>
+                <label><input type="checkbox" value="2" checked>Tue</label>
+                <label><input type="checkbox" value="3" checked>Wed</label>
+                <label><input type="checkbox" value="4" checked>Thu</label>
+                <label><input type="checkbox" value="5" checked>Fri</label>
+                <label><input type="checkbox" value="6" checked>Sat</label>
+            </div>
 
-    <div id="days">
-        <label><input type="checkbox" value="0" checked>Sun</label>
-        <label><input type="checkbox" value="1" checked>Mon</label>
-        <label><input type="checkbox" value="2" checked>Tue</label>
-        <label><input type="checkbox" value="3" checked>Wed</label>
-        <label><input type="checkbox" value="4" checked>Thu</label>
-        <label><input type="checkbox" value="5" checked>Fri</label>
-        <label><input type="checkbox" value="6" checked>Sat</label>
-    </div>
+            <div id="next-trigger" class="hint"></div>
 
-    <button id="task-create">Create</button>
+            <button id="task-create">Create</button>
+        </div>
 
-    <script src="popup.js"></script>
-</body>
+        <script type="module" src="popup.js"></script>
+    </body>
 
 </html>

@@ -1,61 +1,72 @@
 console.log("🚀 Background service worker loaded");
 
 function showNotification(title) {
-  chrome.notifications.create({
-    type: "basic",
-    iconUrl: "icon.png",
-    title: "Rosminder",
-    message: title,
-  });
+    chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icon.png",
+        title: "Rosminder",
+        message: title,
+    });
 }
 
-// keep service worker alive
-chrome.alarms.create("daily_checker", { periodInMinutes: 1 });
-
 chrome.alarms.onAlarm.addListener(async (alarm) => {
-  console.log("⏰ Alarm fired:", alarm.name);
+    console.log("⏰ Alarm fired:", alarm.name);
 
-  const { tasks = [] } = await chrome.storage.local.get("tasks");
+    const { tasks = [] } = await chrome.storage.local.get("tasks");
+    const task = tasks.find(t => t.id === alarm.name);
 
-  // DAILY checker
-  if (alarm.name === "daily_checker") {
-    const now = new Date();
-    const hhmm = now.toTimeString().slice(0, 5);
-    const today = now.toISOString().slice(0, 10);
-    const day = now.getDay();
+    if (!task || !task.active) return;
 
-    let updated = false;
+    showNotification(task.title);
 
-    tasks.forEach(task => {
-      if (
-        task.type === "DAILY" &&
-        task.active &&
-        task.time === hhmm &&
-        task.daysOfWeek.includes(day) &&
-        task.lastTriggered !== today
-      ) {
-        showNotification(task.title);
-        task.lastTriggered = today;
-        updated = true;
-      }
-    });
-
-    if (updated) {
-      await chrome.storage.local.set({ tasks });
+    if (task.type === "ONE_TIME") {
+        task.active = false;
+        await chrome.storage.local.set({ tasks });
+        chrome.alarms.clear(task.id);
+        return;
     }
 
-    return;
-  }
+    // DAILY → define next trigger
+    if (task.type === "DAILY") {
+        const next = getNextTrigger(
+        task.type,
+        task.time,
+        task.daysOfWeek
+        );
 
-  // ONE_TIME
-  const task = tasks.find(t => t.id === alarm.name);
-  if (!task || !task.active) return;
+        if (!next) return;
 
-  if (task.type === "ONE_TIME") {
-    showNotification(task.title);
-    task.active = false;
+        task.nextTriggerAt = next.getTime();
 
-    await chrome.storage.local.set({ tasks });
-    chrome.alarms.clear(alarm.name);
-  }
+        await chrome.storage.local.set({ tasks });
+        chrome.alarms.create(task.id, { when: task.nextTriggerAt });
+    }
 });
+
+// ================== TIME LOGIC ==================
+function getNextTrigger(type, time, daysOfWeek = []) {
+    const now = new Date();
+    const [hh, mm] = time.split(":").map(Number);
+
+    if (type === "ONE_TIME") {
+        const target = new Date();
+        target.setHours(hh, mm, 0, 0);
+        if (target <= now) target.setDate(target.getDate() + 1);
+        return target;
+    }
+
+    for (let i = 0; i < 7; i++) {
+        const candidate = new Date();
+        candidate.setDate(now.getDate() + i);
+        candidate.setHours(hh, mm, 0, 0);
+
+        if (
+        daysOfWeek.includes(candidate.getDay()) &&
+        candidate > now
+        ) {
+        return candidate;
+        }
+    }
+
+    return null;
+}
